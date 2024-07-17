@@ -1,0 +1,15 @@
+{
+  "name": "ecommerce-2",
+  "version": "1.0.0",
+  "description": "MERN Ecommerce app",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "author": "Mohsin Ali - Brad Traversy",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
