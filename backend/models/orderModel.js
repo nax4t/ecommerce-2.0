@@ -1,18 +1,18 @@
 import mongoose from 'mongoose'
 
-const orderSchema = new mongoose.Schema(
+const orderSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      req: true,
+      required: true,
       ref: 'User',
     },
     orderItems: [
       {
-        name: { Type: String, required: true },
-        qty: { Type: Number, required: true },
-        image: { Type: String, required: true },
-        price: { Type: Number, required: true },
+        name: { type: String, required: true },
+        qty: { type: Number, required: true },
+        image: { type: String, required: true },
+        price: { type: Number, required: true },
         product: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
@@ -21,19 +21,20 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     shippingAddress: {
-      address: { Type: String, required: true },
-      city: { Type: String, required: true },
-      postalCode: { Type: String, required: true },
-      country: { Type: String, required: true },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+      postalCode: { type: String, required: true },
+      country: { type: String, required: true },
     },
     paymentMethod: {
-      Type: String,
+      type: String,
       required: true,
     },
-    itemsPrice: {
-      type: Number,
-      required: true,
-      default: 0.0,
+    paymentResult: {
+      id: { type: String },
+      status: { type: String },
+      update_time: { type: String },
+      email_address: { type: String },
     },
     taxPrice: {
       type: Number,
@@ -72,6 +73,6 @@ const orderSchema = new mongoose.Schema(
   }
 )
 
-const Order = new mongoose.model('Order', orderSchema)
+const Order = mongoose.model('Order', orderSchema)
 
 export default Order
