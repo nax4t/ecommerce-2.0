@@ -2,14 +2,39 @@ import { Link, useParams } from 'react-router-dom';
 import { Row, Col, ListGroup, Image, Form, Button, Card } from 'react-bootstrap';
 import Message from './../components/Message';
 import Loader from './../components/Loader';
-import { useGetOrderDetailsQuery } from '../slices/ordersApiSlice';
+import { useGetOrderDetailsQuery, useDeliverOrderMutation, usePayOrderMutation } from '../slices/ordersApiSlice';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const OrderScreen = () => {
     const { id: orderId } = useParams()
 
     const {data: order, refetch, isLoading, error} = useGetOrderDetailsQuery(orderId)
 
-    console.log(order)
+    const [deliverOrder, {isLoading: loadingDeliver}] = useDeliverOrderMutation()
+    const [payOrder, {isLoading: loadingPay}] = usePayOrderMutation()
+
+    const { userInfo } = useSelector((state) => state.auth)
+
+    const deliverOrderHandler = async () => {
+        try {
+            await deliverOrder(orderId)
+            refetch()
+            toast.success('Order delivered')
+        } catch (err) {
+            toast.error(err?.data?.message || err.message)
+        }
+    }
+
+    const payOrderHandler = async () => {
+        try {
+            await payOrder(orderId)
+            refetch()
+            toast.success('Order paid')
+        } catch (err) {
+            toast.error(err?.data?.message || err.message)
+        }
+    }
 
   return isLoading ? <Loader /> : error ? <Message variant='danger'>Order details not found.</Message> : (
     <>
@@ -101,7 +126,22 @@ const OrderScreen = () => {
                         </ListGroup.Item>
 
                         {/* MARK AS PAID PLACEHOLDER */}
+                        {loadingPay && <Loader />}
+
+                        {userInfo && userInfo.isAdmin && !order.isPaid && (
+                            <ListGroup.Item>
+                                <Button type='button' className='btn btn-block' onClick={payOrderHandler}>Mark as paid</Button>
+                            </ListGroup.Item>
+                        )}
+
                         {/* MARK AS DELIVERED PLACEHOLDER */}
+                        {loadingDeliver && <Loader />}
+
+                        {userInfo && userInfo.isAdmin && !order.isDelivered && (
+                            <ListGroup.Item>
+                                <Button type='button' className='btn btn-block' onClick={deliverOrderHandler}>Mark as delivered</Button>
+                            </ListGroup.Item>
+                        )}
                     </ListGroup>
                 </Card>
             </Col>
